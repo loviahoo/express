@@ -17,6 +17,7 @@ app.set('view engine','handlebars');
 app.set('port',process.env.PORT||3000);
 
 
+
 // 添加两个新路由
 app.get('/',function(req,res){
   //返回状态码200，不用显示指定
@@ -27,10 +28,7 @@ app.get('/',function(req,res){
 })
 app.get('/about',function(req,res){
   // res.type('text/plain');
-  // res.send('About Meadowlark Travel');
-  // var randomFortune = fortune.getFortune();
-  res.send(fortune.getFortune());
-  res.render('about',{fortune: fortune.getFortune()});
+  res.render('about',{ fortune: fortune.getFortune() });
 })
 
 //定制404页面，app.use是Express添加中间件的一种方法
