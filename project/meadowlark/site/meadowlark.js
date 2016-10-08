@@ -1,16 +1,11 @@
 //项目入口文件
+//在文件的顶部要指明引入什么（不是必须，是一种规范）
 var express = require('express');
 var app = express();
+var fortune = require('./lib/fortune.js');
+//加前缀./告诉node，它不应该在node_modules目录中查找这个模块，如果我们忽略了这个模块，就会导致失败
 
 app.use(express.static(__dirname+'/public'));
-
-var fortunes = [
-    "Conquer your fears or they will conquer you.",
-    "River need springs.",
-    "Do not fear what you don't know",
-    "You will havea pleasant surprise",
-    "whenever posiible,keep it simple."
-];
 
 //设置handlebars视图引擎
 var handlebars = require('express3-handlebars')
@@ -33,8 +28,9 @@ app.get('/',function(req,res){
 app.get('/about',function(req,res){
   // res.type('text/plain');
   // res.send('About Meadowlark Travel');
-  var randomFortune = fortunes[Math.floor(Math.random()*fortunes.length)];
-  res.render('about',{fortune: randomFortune});
+  // var randomFortune = fortune.getFortune();
+  res.send(fortune.getFortune());
+  res.render('about',{fortune: fortune.getFortune()});
 })
 
 //定制404页面，app.use是Express添加中间件的一种方法
