@@ -13,10 +13,15 @@ var handlebars = require('express3-handlebars')
 app.engine('handlebars',handlebars.engine);
 app.set('view engine','handlebars');
 
-
+//传给视图的上下文的一部分
 app.set('port',process.env.PORT||3000);
 
-
+//准备用一些中间件来检测查询字符串中的test=1，它必须出现在我们定义的所有路由之前
+//如果test=1出现在任何页面的查询字符串中（并且不是运行在生产服务器上），属性res.locals.showTests就会被设为true。res.locals对象是要
+app.use(function(req,res,next){
+  res.locals.showTests = app.get('env') !== 'production' && req.query.test === '1';
+  next();
+})
 
 // 添加两个新路由
 app.get('/',function(req,res){
@@ -26,9 +31,29 @@ app.get('/',function(req,res){
   // 不在指定内容类型和状态码：视图引擎默认会返回text/html的内容类型和200的状态码
   res.render('home');
 })
+
+//在路由中指明视图应该使用哪个页面测试文件
 app.get('/about',function(req,res){
   // res.type('text/plain');
-  res.render('about',{ fortune: fortune.getFortune() });
+  res.render('about',{
+    fortune: fortune.getFortune(),
+    pageTestScript: '/qa/tests-about.js'
+  });
+})
+
+app.get('/tours/hood-river',function(req,res){
+  res.render('tours/hood-river')
+})
+
+app.get('/tours/request-group-rate',function(req,res){
+  res.render('tours/request-group-rate')
+})
+
+app.get('/header',function(req,res){
+  res.set('Content-Type','text/plain');
+  var s = '';
+  for(var name in req.headers) s += name + ': ' + req.headers[name] + '\n';
+    res.send(s);
 })
 
 //定制404页面，app.use是Express添加中间件的一种方法
